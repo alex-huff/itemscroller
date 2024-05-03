@@ -6,6 +6,7 @@ import java.util.*;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 
+import net.minecraft.class_9694;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -108,9 +109,12 @@ public class InventoryUtils
             CraftingRecipe recipe = Configs.Generic.USE_RECIPE_CACHING.getBooleanValue() ? lastRecipe : null;
             RecipeEntry<?> recipeEntry = null;
 
-            if (recipe == null || recipe.matches(craftMatrix, world) == false)
+            // FIXME --> class_9694 = CraftingInput, class_9695 = RecipeInput (via Mojang map)
+            class_9694 newObj = craftMatrix.method_59961();
+
+            if (recipe == null || recipe.matches(newObj, world) == false)
             {
-                Optional<RecipeEntry<CraftingRecipe>> optional = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, craftMatrix, world);
+                Optional<RecipeEntry<CraftingRecipe>> optional = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, newObj, world);
                 recipe = optional.map(RecipeEntry::value).orElse(null);
                 recipeEntry = optional.orElse(null);
             }
@@ -122,7 +126,7 @@ public class InventoryUtils
                      ((ClientPlayerEntity) player).getRecipeBook().contains(recipeEntry)))
                 {
                     inventoryCraftResult.setLastRecipe(recipeEntry);
-                    stack = recipe.craft(craftMatrix, world.getRegistryManager());
+                    stack = recipe.craft(newObj, world.getRegistryManager());
                 }
 
                 if (setEmptyStack || stack.isEmpty() == false)
