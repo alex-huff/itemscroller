@@ -6,7 +6,6 @@ import java.util.*;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 
-import net.minecraft.class_9694;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -24,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.ScreenHandler;
@@ -108,13 +108,11 @@ public class InventoryUtils
             ItemStack stack = ItemStack.EMPTY;
             CraftingRecipe recipe = Configs.Generic.USE_RECIPE_CACHING.getBooleanValue() ? lastRecipe : null;
             RecipeEntry<?> recipeEntry = null;
+            CraftingRecipeInput recipeInput = craftMatrix.createRecipeInput();
 
-            // FIXME --> class_9694 = CraftingInput, class_9695 = RecipeInput (via Mojang map)
-            class_9694 newObj = craftMatrix.method_59961();
-
-            if (recipe == null || recipe.matches(newObj, world) == false)
+            if (recipe == null || recipe.matches(recipeInput, world) == false)
             {
-                Optional<RecipeEntry<CraftingRecipe>> optional = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, newObj, world);
+                Optional<RecipeEntry<CraftingRecipe>> optional = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, recipeInput, world);
                 recipe = optional.map(RecipeEntry::value).orElse(null);
                 recipeEntry = optional.orElse(null);
             }
@@ -126,7 +124,7 @@ public class InventoryUtils
                      ((ClientPlayerEntity) player).getRecipeBook().contains(recipeEntry)))
                 {
                     inventoryCraftResult.setLastRecipe(recipeEntry);
-                    stack = recipe.craft(newObj, world.getRegistryManager());
+                    stack = recipe.craft(recipeInput, world.getRegistryManager());
                 }
 
                 if (setEmptyStack || stack.isEmpty() == false)
