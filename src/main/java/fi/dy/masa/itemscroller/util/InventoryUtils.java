@@ -120,7 +120,7 @@ public class InventoryUtils
             if (recipe != null)
             {
                 if ((recipe.isIgnoredInRecipeBook() ||
-                        world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) == false ||
+                     world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) == false ||
                      ((ClientPlayerEntity) player).getRecipeBook().contains(recipeEntry)))
                 {
                     inventoryCraftResult.setLastRecipe(recipeEntry);
